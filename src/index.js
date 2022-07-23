@@ -72,31 +72,6 @@ function contentGen() {
     content.appendChild(main);
     return content
     
-
-    function projectFactory(title, container) {
-        let thing = document.createElement('div');
-        thing.id = title;
-        thing.innerHTML = title;
-        thing.classList.add('projects');
-        const taskList = [];
-    
-        let taskID = 0;
-        const addTask = (title, details, dueDate, priority, taskID) => {
-            let task = makeTaskDOM();
-            container.appendChild(task);
-        }
-
-        
-
-        container.appendChild(thing);
-        return {title, taskList, addTask};
-    }
-
-    
-
-
-
-
     //Right side stuff
 
 }
@@ -114,7 +89,7 @@ function taskGen(project, main) {
 
     let addTask = document.createElement('div');
     addTask.id = 'addTask';
-    addTask.innerHTML = 'Add a new task';
+    addTask.innerHTML = '+ Add a new task';
     addTask.addEventListener('click', () => popup.showModal());
 
     
@@ -144,7 +119,6 @@ function makePopupDOM(side ,container, format) {
     const popup = document.createElement('DIALOG');
 
     const popupHeader = document.createElement('div');
-    popupHeader.id = 'popupHeader';
 
     
     const popupForm = document.createElement('FORM');
@@ -152,6 +126,7 @@ function makePopupDOM(side ,container, format) {
     popupForm.action = './index.html';
     const textarea = document.createElement('TEXTAREA');
     textarea.classList.add('textarea');
+    textarea.placeholder = 'Title...';
     popupForm.appendChild(textarea);
 
     const popupContainer = document.createElement('div');
@@ -176,15 +151,24 @@ function makePopupDOM(side ,container, format) {
     if (format == 'makeProject') {
         popup.id = 'projectPopup';
         popupHeader.innerHTML = 'New Project';
+        popupHeader.id = 'projectPopupHeader';
+
         popupForm.id = 'projectPopupForm';
         popupContainer.id = 'projectPopupContainer';
         // submitBtn.id = 'projectSubmitBtn';
         // closeBtn.id = 'projectCloseBtn';
 
+        let projectNO = 0;
         popupForm.addEventListener('submit', (e) => {
             e.preventDefault();
             console.log(textarea.value);
-            projectFactory(textarea.value, container);
+            if (textarea.value != '') {
+                projectFactory(textarea.value, container, projectNO);
+                projectNO++;
+            }
+            else {
+                alert('Project must be named');
+            }
             //might need counter 
             // counter++;
         })
@@ -194,15 +178,23 @@ function makePopupDOM(side ,container, format) {
     else if (format =='makeTask') {
         popup.id = 'taskPopup';
         popupHeader.innerHTML = 'New Task';
+        popupHeader.id = 'taskPopupHeader';
+
         popupForm.id = 'taskPopupForm';
         popupContainer.id = 'taskPopupContainer';
-        // submitBtn.id = 'taskSubmitBtn';
-        // closeBtn.id = 'taskCloseBtn';
+
+        textarea.id = 'titleTextArea';
+        const detailsTextArea = document.createElement('TEXTAREA');
+        detailsTextArea.id = 'detailsTextArea';
+        detailsTextArea.classList.add('textarea');
+        detailsTextArea.placeholder = 'Details...';
+        popupForm.insertBefore(detailsTextArea, popupContainer);
+
 
         popupForm.addEventListener('submit', (e) => {
             e.preventDefault();
             console.log(textarea.value);
-            projectFactory(textarea.value, projectContainer);
+            // projectFactory(textarea.value, container, );
             //might need counter 
             // counter++;
         })
@@ -234,8 +226,22 @@ function makeTaskDOM(title, details, dueDate, priority, taskID) {
     return taskCard
 }
 
-
-
+function projectFactory(title, container, projectNO) {
+    let thing = document.createElement('div');
+    thing.id = 'project' + projectNO;
+    thing.innerHTML = title;
+    thing.classList.add('projects');
+    const taskList = [];
+    
+    let taskID = 0;
+    const addTask = (title, details, dueDate, priority, taskID) => {
+        let task = makeTaskDOM();
+        container.appendChild(task);
+    }
+    
+    container.appendChild(thing);
+    return {title, taskList, addTask};    
+}
 
 
 
