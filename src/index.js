@@ -5,9 +5,7 @@ import './style.css';
 function component() {
     let element = contentGen();
 
-    //How do I link the left project and it's list items on the right gen if they're 
-    //in 2 different generators? I should add function in the factory when called it'll
-    //add a list item to the object
+    
 
 
 
@@ -44,13 +42,17 @@ function contentGen() {
     sidebar.appendChild(text);
 
 
-    const projectContainer = document.createElement('div');
+    let projectContainer = document.createElement('div');
     projectContainer.id = 'projectContainer';
     sidebar.appendChild(projectContainer);
+    
+    //Needed to assign tasks to a project
+    
+    let defaultProject = projectFactory('First Project', projectContainer, '0', 'firstProject');
 
-    let defaultProject = projectFactory('First Project', projectContainer);
+    let currentProjectID = '0';
 
-    const popup = makePopupDOM(sidebar, projectContainer, 'makeProject');
+    const popup = makePopupDOM(sidebar, projectContainer, 'makeProject', currentProjectID, projectFactory);
     
     const addProjectBtn = document.createElement('button');
     addProjectBtn.id ='addProjectBtn';
@@ -64,19 +66,7 @@ function contentGen() {
     //Creates right side
     let main = document.createElement('div');
     main.id = 'main';
-    taskGen(defaultProject, main);
 
-
-
-    content.appendChild(sidebar);
-    content.appendChild(main);
-    return content
-    
-    //Right side stuff
-
-}
-
-function taskGen(project, main) {
     let rightHeader = document.createElement('div');
     rightHeader.id = 'rightHeader';
     rightHeader.innerHTML = 'Task List';
@@ -84,8 +74,8 @@ function taskGen(project, main) {
     let taskContainer = document.createElement('div');
     taskContainer.id = 'taskContainer';
 
-    const popup = makePopupDOM(main, taskContainer, 'makeTask');
-    let defaultTask = project.addTask('Default task', '', '7.24.22', 'low');
+    // const popup = makePopupDOM(main, taskContainer, 'makeTask');
+    let defaultTask = defaultProject.addTask('Default task', '', '7.24.22', 'low', '0', taskContainer);
 
     let addTask = document.createElement('div');
     addTask.id = 'addTask';
@@ -110,12 +100,17 @@ function taskGen(project, main) {
     main.appendChild(rightHeader);
     main.appendChild(taskContainer);
     main.appendChild(addTask);
+
+    content.appendChild(sidebar);
+    content.appendChild(main);
+    return content
     
-    return main
+    //Right side stuff
+
 }
 
-//sidebar stuff
-function makePopupDOM(side ,container, format) {
+// //sidebar stuff
+function makePopupDOM(side ,container, format, currentProjectID, projectFactory) {
     const popup = document.createElement('DIALOG');
 
     const popupHeader = document.createElement('div');
@@ -127,6 +122,7 @@ function makePopupDOM(side ,container, format) {
     const textarea = document.createElement('TEXTAREA');
     textarea.classList.add('textarea');
     textarea.placeholder = 'Title...';
+    textarea.required = true;
     popupForm.appendChild(textarea);
 
     const popupContainer = document.createElement('div');
@@ -158,12 +154,12 @@ function makePopupDOM(side ,container, format) {
         // submitBtn.id = 'projectSubmitBtn';
         // closeBtn.id = 'projectCloseBtn';
 
-        let projectNO = 0;
+        let projectNO = 1;
         popupForm.addEventListener('submit', (e) => {
             e.preventDefault();
             console.log(textarea.value);
             if (textarea.value != '') {
-                projectFactory(textarea.value, container, projectNO);
+                projectFactory(textarea.value, container, projectNO, currentProjectID);
                 projectNO++;
             }
             else {
@@ -188,16 +184,40 @@ function makePopupDOM(side ,container, format) {
         detailsTextArea.id = 'detailsTextArea';
         detailsTextArea.classList.add('textarea');
         detailsTextArea.placeholder = 'Details...';
+        detailsTextArea.required = true;
         popupForm.insertBefore(detailsTextArea, popupContainer);
+
+        let priorityBtn = document.createElement('button');
+        priorityBtn.classList.add('priorityBtn');
+        priorityBtn.type = 'button';
+        priorityBtn.value = 'low';
+        priorityBtn.innerHTML = 'Low';
+        priorityBtn.addEventListener('click', () => {
+            if (priorityBtn.value == 'low') {
+                priorityBtn.innerHTML = 'High';
+                priorityBtn.value = 'high';
+            }
+            else if (priorityBtn.value == 'high') {
+                priorityBtn.innerHTML = 'Low';
+                priorityBtn.value = 'low';
+            }
+        });
+        popupContainer.appendChild(priorityBtn);
+
+        let datePicker = document.createElement('INPUT');
+        datePicker.setAttribute('type', 'date');
+        datePicker.id = 'datePicker';
+        datePicker.required = true;
+        popupContainer.appendChild(datePicker);
+
 
 
         popupForm.addEventListener('submit', (e) => {
             e.preventDefault();
-            console.log(textarea.value);
-            // projectFactory(textarea.value, container, );
-            //might need counter 
-            // counter++;
-        })
+            console.log(datePicker.value);
+            let currentProject = document.getElementById(currentProjectID);
+            document.getElementById(currentProjectID).addTask(textarea.value, detailsTextArea.value, priorityBtn.value, datePicker.value);
+        });
 
         side.appendChild(popup);
     }
@@ -208,6 +228,10 @@ function makePopupDOM(side ,container, format) {
 function makeTaskDOM(title, details, dueDate, priority, taskID) {
     const taskCard = document.createElement('div');
     taskCard.id = taskID;
+    let taskClass = title + 'Task';
+    taskClass = taskClass.replace(/\s/g, '');
+    // console.log(taskClass);
+    taskCard.classList.add(taskClass);
 
     const taskPriority = document.createElement('div');
 
@@ -226,21 +250,33 @@ function makeTaskDOM(title, details, dueDate, priority, taskID) {
     return taskCard
 }
 
-function projectFactory(title, container, projectNO) {
+function projectFactory(title, projectContainer, projectNO, currentProjectID) {
     let thing = document.createElement('div');
     thing.id = 'project' + projectNO;
     thing.innerHTML = title;
     thing.classList.add('projects');
     const taskList = [];
     
-    let taskID = 0;
-    const addTask = (title, details, dueDate, priority, taskID) => {
-        let task = makeTaskDOM();
-        container.appendChild(task);
-    }
+    thing.addEventListener('click', () => {
+        currentProjectID = thing.id;
+    });
     
-    container.appendChild(thing);
-    return {title, taskList, addTask};    
+    
+    
+    let taskID = 0;
+    const addTask = (title, details, dueDate, priority, taskID, taskContainer) => {
+        // console.log('ello');
+        let task = makeTaskDOM(title, details, dueDate, priority, taskID);
+        // console.log(task);
+
+        console.log(taskContainer);
+        taskContainer.appendChild(task);
+    }
+    console.log(thing);
+    projectContainer.appendChild(thing);
+    
+
+    return {addTask};    
 }
 
 
