@@ -232,18 +232,54 @@ function makeTaskDOM(title, details, dueDate, priority, taskID) {
     taskClass = taskClass.replace(/\s/g, '');
     // console.log(taskClass);
     taskCard.classList.add(taskClass);
-
-    const taskPriority = document.createElement('div');
-
+    taskCard.classList.add('task');
+    
     const taskText = document.createElement('div');
     taskText.innerHTML = title;
-
+    taskText.classList.add('taskText');
+    
     const taskDetails = document.createElement('div');
-
+    taskDetails.innerHTML = details;
+    taskDetails.classList.add('taskDetails');
+    
     const taskDetailsBtn = document.createElement('button');
-
+    
+    
     const taskPriorityBtn = document.createElement('button');
+    taskPriorityBtn.innerHTML = priority;
+    taskPriorityBtn.classList.add('taskPriorityBtn');
+    taskPriorityBtn.addEventListener('click', () => {
+        if (priority == 'low') {
+            priority = 'high';
+            taskPriorityBtn.innerHTML = 'high';
+        }
+        else {
+            priority = 'low';
+            taskPriorityBtn.innerHTML = 'low';
+        }
+    });
 
+
+
+    let taskDueDate = document.createElement('INPUT');
+    taskDueDate.setAttribute('type', 'date');
+    taskDueDate.classList.add('taskDueDate');
+
+    const deleteBtn = document.createElement('div');
+    deleteBtn.innerHTML = 'X';
+    deleteBtn.classList.add('deleteBtn');
+    deleteBtn.addEventListener('click', () => {
+        taskCard.remove();
+    });
+
+
+
+
+    taskCard.appendChild(taskText);
+    taskCard.appendChild(taskDetails);
+    taskCard.appendChild(taskPriorityBtn);
+    taskCard.appendChild(taskDueDate);
+    taskCard.appendChild(deleteBtn);
 
      
 

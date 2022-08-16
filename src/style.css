@@ -1,0 +1,226 @@
+@font-face {
+    font-family: 'Karla';
+    font-weight: 200;
+    src: url('./Karla/static/Karla-ExtraLight.ttf');
+  }
+
+@font-face {
+    font-family: 'Karla';
+    font-weight: 300;
+    src: url('./Karla/static/Karla-Light.ttf');
+}
+
+@font-face {
+    font-family: 'Karla';
+    font-weight: 400;
+    src: url('./Karla/static/Karla-Regular.ttf');
+}
+
+:root {
+    --lightOrange: #ffbf69;
+    --orange: #ff9f1c;
+    --green: #CBF3F0;
+    --black: #484548;
+    --red: #FA003F;
+    --grey: #FBFBFA;
+}
+
+* {
+    margin: 0;
+    padding: 0px 0px;
+    list-style-type: none;
+    height: 100%;
+    letter-spacing: .7px;
+    font-family: Karla;
+}
+
+
+#content {
+    display: flex;
+}
+
+#sidebar {
+    background-color: var(--grey);
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    padding: 30px 50px;
+    min-width: 350px;
+    font-size: 1.7rem;
+    font-weight: 300;
+}
+
+    #leftHeader {
+        font-weight: 400;
+        font-size: 1.8rem;
+        height: 100px;
+    }
+
+    .projects {
+        height: 50px;
+    }
+
+
+    #addProjectBtn {
+        width: 200px;
+        height: 50px;
+    }
+
+    #projectPopup, #taskPopup {
+        /* display: flex; */
+        flex-direction: column;
+        align-self: center;
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        margin-left: -250px;
+        margin-top: -250px;
+        width: 700px;
+        height: 400px;
+        border: 0;
+    }
+
+    #popup::backdrop {
+        background: rgb(0 0 0 / .2);
+    }
+
+        #projectPopupHeader, #taskPopupHeader {
+            background-color: var(--green);
+            height: 80px;
+            box-sizing: border-box;
+            padding: 30px 30px;
+        }
+        form {
+            height: 240px;
+        }
+        .textarea {
+            width: 100%;
+            border: 0;
+            outline: none;
+            box-sizing: border-box;
+            padding: 30px 30px;
+            resize: none;
+        }
+
+        #projectPopupContainer, #taskPopupContainer {
+            display: flex;
+            box-sizing: border-box;
+            padding: 5px 20px;
+            width: 100%;
+            height: 70px;
+        }
+            .submitBtn {
+                background-color: var(--orange);
+                width: 100px;
+                height: 50px;
+            }
+            .closeBtn {
+                background-color: var(--red);
+                width: 100px;
+                height: 50px;
+            }
+            
+
+
+
+
+#main {
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    padding: 50px 100px;
+    background-color: white;
+    width: 100%;
+    
+}
+
+    #rightHeader {
+        font-size: 2rem;
+        height: 80px;
+        border-bottom: 2px solid grey;
+    }
+
+    #taskContainer {
+        display: flex;
+        gap: 5px;
+        box-sizing: border-box;
+        padding: 10px 0px;
+    }
+
+    .task {
+        height: 80px;
+        width: 100%;
+        border: 1px solid black;
+        box-sizing: border-box;
+        padding: 15px 5px;
+        display: flex;
+        align-items: center;
+    }
+
+        .taskText {
+            width: auto;
+        }
+        .taskDetails {
+            color: #000;
+        }
+        .taskPriorityBtn {
+            color: rebeccapurple;
+        }
+        .taskDueDate {
+            height: 50px;
+        }
+        .deleteBtn {
+            font-size: 30px;
+            border: 2px solid black;
+        }
+
+    #addTask {
+        display: flex;
+        box-sizing: border-box;
+        padding: 10px 30px;
+        font-size: 1.5rem;
+        border: 2px solid grey;
+        height: 80px;
+        align-items: center;
+    }
+
+    #taskPopupForm {
+        font-size: 3rem;
+    }
+        #taskPopupHeader {
+            font-weight: 300;
+            font-size: 1.7rem;
+
+        }
+
+        #titleTextArea {
+            height: 50px;
+            /* background-color: peachpuff; */
+            overflow: hidden;
+            justify-items: center;
+            box-sizing: border-box;
+            padding: 10px 30px;
+            align-self: center;
+        }
+        #detailsTextArea {
+            /* background-color: lightblue; */
+            height: 150px;        
+        }
+
+        .priorityBtn {
+            font-size: 1rem;
+            border: 1px solid black;
+            width: 100px;
+            height: 50px;
+        }
+
+        textarea {
+            font-size: 1.1rem;
+            margin-top: 10px;
+        }
+
+        #datePicker {
+            box-sizing: border-box;
+            height: 50px;
+            width: 110px;
+        }
