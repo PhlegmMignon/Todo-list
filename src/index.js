@@ -47,13 +47,13 @@ function contentGen() {
     sidebar.appendChild(projectContainer);
     
     //Needed to assign tasks to a project
-    let projectArray = ['project0'];
+    let projectArray = [];
     
-    let currentProjectID = 'project0';
-    
+    let currentProjectID = ['project0'];
+    // console.log(Array.isArray(currentProjectID));
     
 
-    let defaultProject = projectFactory('First Project', projectContainer, '0', 'project0', projectArray);
+    let defaultProject = projectFactory('First Project', projectContainer, '0', currentProjectID, projectArray);
 
 
     const popup = makePopupDOM(sidebar, projectContainer, 'makeProject', currentProjectID, projectFactory, projectArray);
@@ -222,12 +222,12 @@ function makePopupDOM(side ,container, format, currentProjectID, projectFactory,
         popupForm.addEventListener('submit', (e) => {
             e.preventDefault();
             // console.log(datePicker.value);
-            let tempProject = currentProjectID;
-            console.log(currentProjectID);
-            console.log(tempProject);
-            // let currentProject = projectArray[];
+            let tempProject = currentProjectID[0];
             // console.log(currentProjectID);
-            currentProject.addTask(textarea.value, detailsTextArea.value, priorityBtn.value, datePicker.value);
+            console.log(tempProject);
+            let currentProject = projectArray[0];
+            console.log(currentProject.id);
+            currentProject.this.addTask(textarea.value, detailsTextArea.value, priorityBtn.value, datePicker.value);
         });
 
         side.appendChild(popup);
@@ -305,12 +305,15 @@ function projectFactory(title, projectContainer, projectNO, currentProjectID, pr
     thing.innerHTML = title;
     thing.classList.add('projects');
     const taskList = [];
-    currentProjectID = thing.id;
-    console.log('thingid = ' + thing.id);
 
-    if (thing.id != 'project0') {
-        projectArray.push(thing.id);
-    }
+    // console.log(Array.isArray(currentProjectID));
+    currentProjectID.pop();
+    currentProjectID.push(thing.id);
+
+    
+    // console.log('thingid = ' + thing.id);
+
+    projectArray.push(thing);
     // console.log(projectArray);
 
     
@@ -336,17 +339,6 @@ function projectFactory(title, projectContainer, projectNO, currentProjectID, pr
 
     return {addTask};    
 }
-
-
-
-
-
-
-
-
-
-
-
 
 
 
