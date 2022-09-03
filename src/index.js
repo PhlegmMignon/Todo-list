@@ -49,14 +49,14 @@ function contentGen() {
     //Needed to assign tasks to a project
     let projectArray = [];
     
-    let currentProjectID = ['project0'];
+    let currentProjectID = 'project0';
     // console.log(Array.isArray(currentProjectID));
     
 
-    let defaultProject = projectFactory('First Project', projectContainer, '0', currentProjectID, projectArray);
+    let defaultProject = projectFactory('First Project');
 
 
-    const popup = makePopupDOM(sidebar, projectContainer, 'makeProject', currentProjectID, projectFactory, projectArray);
+    const popup = makePopupDOM('makeProject');
     
     const addProjectBtn = document.createElement('button');
     addProjectBtn.id ='addProjectBtn';
@@ -78,8 +78,9 @@ function contentGen() {
     let taskContainer = document.createElement('div');
     taskContainer.id = 'taskContainer';
 
-    const taskPopup = makePopupDOM(main, taskContainer, 'makeTask', currentProjectID, '', projectArray);
-    let defaultTask = defaultProject.addTask('Default task', '', '7.24.22', 'low', '0', taskContainer);
+    const taskPopup = makePopupDOM('makeTask');
+    let defaultTask = makeTaskDOM('Default task', '', 'low', '7.24.22');
+    taskContainer.appendChild(defaultTask);
 
     let addTask = document.createElement('div');
     addTask.id = 'addTask';
@@ -111,235 +112,287 @@ function contentGen() {
     
     //Right side stuff
 
+    // //sidebar stuff
+    function makePopupDOM(format) {
+        // console.log(currentProjectID);
 
-}
+        const popup = document.createElement('DIALOG');
 
-// //sidebar stuff
-function makePopupDOM(side ,container, format, currentProjectID, projectFactory, projectArray) {
-    // console.log(currentProjectID);
+        const popupHeader = document.createElement('div');
 
-    const popup = document.createElement('DIALOG');
+        
+        const popupForm = document.createElement('FORM');
+        popupForm.method = 'get';
+        popupForm.action = './index.html';
+        const textarea = document.createElement('TEXTAREA');
+        textarea.classList.add('textarea');
+        textarea.placeholder = 'Title...';
+        textarea.required = true;
+        popupForm.appendChild(textarea);
 
-    const popupHeader = document.createElement('div');
+        const popupContainer = document.createElement('div');
 
+        const submitBtn = document.createElement('button');
+        submitBtn.type = 'submit';
+        submitBtn.innerHTML = 'Submit';
+        submitBtn.classList.add('submitBtn');
+
+        const closeBtn = document.createElement('button');
+        closeBtn.type = 'button';
+        closeBtn.innerHTML = 'Cancel';
+        closeBtn.classList.add('closeBtn');
+        closeBtn.addEventListener('click', () => {popup.close()});
+
+        popup.appendChild(popupHeader);
+        popup.appendChild(popupForm);
+        popupContainer.appendChild(submitBtn);
+        popupContainer.appendChild(closeBtn);
+        popupForm.appendChild(popupContainer);
+        
+        if (format == 'makeProject') {
+            popup.id = 'projectPopup';
+            popupHeader.innerHTML = 'New Project';
+            popupHeader.id = 'projectPopupHeader';
+
+            popupForm.id = 'projectPopupForm';
+            popupContainer.id = 'projectPopupContainer';
+            // submitBtn.id = 'projectSubmitBtn';
+            // closeBtn.id = 'projectCloseBtn';
+
+            let projectNO = 1;
+            popupForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                // console.log(textarea.value);
+                if (textarea.value != '') {
+                    projectFactory(textarea.value, projectNO);
+                    projectNO++;
+                }
+                else {
+                    alert('Project must be named');
+                }
+                //might need counter projectFactory(textarea.value, container, projectNO, currentProjectID, projectArray);
+                // counter++;
+            })
+
+            sidebar.appendChild(popup);
+        }
+        else if (format =='makeTask') {
+            popup.id = 'taskPopup';
+            popupHeader.innerHTML = 'New Task';
+            popupHeader.id = 'taskPopupHeader';
+
+            popupForm.id = 'taskPopupForm';
+            popupContainer.id = 'taskPopupContainer';
+
+            textarea.id = 'titleTextArea';
+            const detailsTextArea = document.createElement('TEXTAREA');
+            detailsTextArea.id = 'detailsTextArea';
+            detailsTextArea.classList.add('textarea');
+            detailsTextArea.placeholder = 'Details...';
+            detailsTextArea.required = true;
+            popupForm.insertBefore(detailsTextArea, popupContainer);
+
+            let priorityBtn = document.createElement('button');
+            priorityBtn.classList.add('priorityBtn');
+            priorityBtn.type = 'button';
+            priorityBtn.value = 'low';
+            priorityBtn.innerHTML = 'Low';
+            priorityBtn.addEventListener('click', () => {
+                if (priorityBtn.value == 'low') {
+                    priorityBtn.innerHTML = 'High';
+                    priorityBtn.value = 'high';
+                }
+                else if (priorityBtn.value == 'high') {
+                    priorityBtn.innerHTML = 'Low';
+                    priorityBtn.value = 'low';
+                }
+            });
+            popupContainer.appendChild(priorityBtn);
+
+            let datePicker = document.createElement('INPUT');
+            datePicker.setAttribute('type', 'date');
+            datePicker.id = 'datePicker';
+            datePicker.required = true;
+            popupContainer.appendChild(datePicker);
+
+
+
+            popupForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                // console.log(datePicker.value);
+                // let tempProject = currentProjectID[0];
+                // console.log(tempProject);
+                let currentProject = projectArray[0];
+                // console.log(currentProject.id);
+                console.log(projectArray[0]);
+
+                let taskCard = makeTaskDOM(textarea.value, detailsTextArea.value, priorityBtn.value, datePicker.value);
+                taskContainer.appendChild(taskCard);
+            });
+
+            main.appendChild(popup);
+        }
+
+        return popup
+    }
     
-    const popupForm = document.createElement('FORM');
-    popupForm.method = 'get';
-    popupForm.action = './index.html';
-    const textarea = document.createElement('TEXTAREA');
-    textarea.classList.add('textarea');
-    textarea.placeholder = 'Title...';
-    textarea.required = true;
-    popupForm.appendChild(textarea);
-
-    const popupContainer = document.createElement('div');
-
-    const submitBtn = document.createElement('button');
-    submitBtn.type = 'submit';
-    submitBtn.innerHTML = 'Submit';
-    submitBtn.classList.add('submitBtn');
-
-    const closeBtn = document.createElement('button');
-    closeBtn.type = 'button';
-    closeBtn.innerHTML = 'Cancel';
-    closeBtn.classList.add('closeBtn');
-    closeBtn.addEventListener('click', () => {popup.close()});
-
-    popup.appendChild(popupHeader);
-    popup.appendChild(popupForm);
-    popupContainer.appendChild(submitBtn);
-    popupContainer.appendChild(closeBtn);
-    popupForm.appendChild(popupContainer);
-    
-    if (format == 'makeProject') {
-        popup.id = 'projectPopup';
-        popupHeader.innerHTML = 'New Project';
-        popupHeader.id = 'projectPopupHeader';
-
-        popupForm.id = 'projectPopupForm';
-        popupContainer.id = 'projectPopupContainer';
-        // submitBtn.id = 'projectSubmitBtn';
-        // closeBtn.id = 'projectCloseBtn';
-
-        let projectNO = 1;
-        popupForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            // console.log(textarea.value);
-            if (textarea.value != '') {
-                projectFactory(textarea.value, container, projectNO, currentProjectID, projectArray);
-                projectNO++;
+    function makeTaskDOM(title, details, priority, dueDate) {
+        const taskCard = document.createElement('div');
+        // taskCard.id = taskID;
+        // let taskClass = title + 'Task';
+        // taskClass = taskClass.replace(/\s/g, '');
+        // console.log(currentProjectID);
+        // let tempID = getCurrentProjectID();
+        // console.log(tempID);
+        // taskCard.classList.add(taskClass);
+        let taskClass = currentProjectID + 'Task';
+        taskCard.classList.add(taskClass);
+        taskCard.classList.add('task');
+        
+        const taskText = document.createElement('div');
+        taskText.innerHTML = title;
+        taskText.classList.add('taskText');
+        
+        const taskDetails = document.createElement('div');
+        taskDetails.innerHTML = details;
+        taskDetails.classList.add('taskDetails');
+        
+        const taskDetailsBtn = document.createElement('button');
+        
+        
+        const taskPriorityBtn = document.createElement('button');
+        taskPriorityBtn.innerHTML = priority;
+        taskPriorityBtn.classList.add('taskPriorityBtn');
+        taskPriorityBtn.addEventListener('click', () => {
+            if (priority == 'low') {
+                priority = 'high';
+                taskPriorityBtn.innerHTML = 'high';
             }
             else {
-                alert('Project must be named');
-            }
-            //might need counter 
-            // counter++;
-        })
-
-        side.appendChild(popup);
-    }
-    else if (format =='makeTask') {
-        popup.id = 'taskPopup';
-        popupHeader.innerHTML = 'New Task';
-        popupHeader.id = 'taskPopupHeader';
-
-        popupForm.id = 'taskPopupForm';
-        popupContainer.id = 'taskPopupContainer';
-
-        textarea.id = 'titleTextArea';
-        const detailsTextArea = document.createElement('TEXTAREA');
-        detailsTextArea.id = 'detailsTextArea';
-        detailsTextArea.classList.add('textarea');
-        detailsTextArea.placeholder = 'Details...';
-        detailsTextArea.required = true;
-        popupForm.insertBefore(detailsTextArea, popupContainer);
-
-        let priorityBtn = document.createElement('button');
-        priorityBtn.classList.add('priorityBtn');
-        priorityBtn.type = 'button';
-        priorityBtn.value = 'low';
-        priorityBtn.innerHTML = 'Low';
-        priorityBtn.addEventListener('click', () => {
-            if (priorityBtn.value == 'low') {
-                priorityBtn.innerHTML = 'High';
-                priorityBtn.value = 'high';
-            }
-            else if (priorityBtn.value == 'high') {
-                priorityBtn.innerHTML = 'Low';
-                priorityBtn.value = 'low';
+                priority = 'low';
+                taskPriorityBtn.innerHTML = 'low';
             }
         });
-        popupContainer.appendChild(priorityBtn);
-
-        let datePicker = document.createElement('INPUT');
-        datePicker.setAttribute('type', 'date');
-        datePicker.id = 'datePicker';
-        datePicker.required = true;
-        popupContainer.appendChild(datePicker);
-
-
-
-        popupForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            // console.log(datePicker.value);
-            let tempProject = currentProjectID[0];
-            // console.log(currentProjectID);
-            console.log(tempProject);
-            let currentProject = projectArray[0];
-            console.log(currentProject.id);
-            currentProject.this.addTask(textarea.value, detailsTextArea.value, priorityBtn.value, datePicker.value);
+    
+    
+    
+        let taskDueDate = document.createElement('div');
+        taskDueDate.classList.add('taskDueDate');
+        taskDueDate.innerHTML = dueDate.replace(/\.|\-/g ,'/');
+    
+    
+    
+        const deleteBtn = document.createElement('div');
+        deleteBtn.innerHTML = 'X';
+        deleteBtn.classList.add('deleteBtn');
+        deleteBtn.addEventListener('click', () => {
+            taskCard.remove();
         });
-
-        side.appendChild(popup);
+    
+    
+    
+    
+        taskCard.appendChild(taskText);
+        taskCard.appendChild(taskDetails);
+        taskCard.appendChild(taskPriorityBtn);
+        taskCard.appendChild(taskDueDate);
+        taskCard.appendChild(deleteBtn);
+    
+         
+    
+        return taskCard
     }
 
-    return popup
-}
+    function projectFactory(title, projectNO) {
+        let thing = document.createElement('div');
 
-function makeTaskDOM(title, details, dueDate, priority, taskID) {
-    const taskCard = document.createElement('div');
-    taskCard.id = taskID;
-    let taskClass = title + 'Task';
-    taskClass = taskClass.replace(/\s/g, '');
-    // console.log(taskClass);
-    taskCard.classList.add(taskClass);
-    taskCard.classList.add('task');
-    
-    const taskText = document.createElement('div');
-    taskText.innerHTML = title;
-    taskText.classList.add('taskText');
-    
-    const taskDetails = document.createElement('div');
-    taskDetails.innerHTML = details;
-    taskDetails.classList.add('taskDetails');
-    
-    const taskDetailsBtn = document.createElement('button');
-    
-    
-    const taskPriorityBtn = document.createElement('button');
-    taskPriorityBtn.innerHTML = priority;
-    taskPriorityBtn.classList.add('taskPriorityBtn');
-    taskPriorityBtn.addEventListener('click', () => {
-        if (priority == 'low') {
-            priority = 'high';
-            taskPriorityBtn.innerHTML = 'high';
+        if (projectNO == undefined) {
+            thing.id = 'project0';
         }
         else {
-            priority = 'low';
-            taskPriorityBtn.innerHTML = 'low';
+            thing.id = 'project' + projectNO;
         }
-    });
 
-
-
-    let taskDueDate = document.createElement('div');
-    taskDueDate.classList.add('taskDueDate');
-    taskDueDate.innerHTML = dueDate.replace(/\./g ,'/');
-
-
-
-    const deleteBtn = document.createElement('div');
-    deleteBtn.innerHTML = 'X';
-    deleteBtn.classList.add('deleteBtn');
-    deleteBtn.addEventListener('click', () => {
-        taskCard.remove();
-    });
-
-
-
-
-    taskCard.appendChild(taskText);
-    taskCard.appendChild(taskDetails);
-    taskCard.appendChild(taskPriorityBtn);
-    taskCard.appendChild(taskDueDate);
-    taskCard.appendChild(deleteBtn);
-
-     
-
-    return taskCard
-}
-
-function projectFactory(title, projectContainer, projectNO, currentProjectID, projectArray) {
-    let thing = document.createElement('div');
-    thing.id = 'project' + projectNO;
-    thing.innerHTML = title;
-    thing.classList.add('projects');
-    const taskList = [];
-
-    // console.log(Array.isArray(currentProjectID));
-    currentProjectID.pop();
-    currentProjectID.push(thing.id);
-
+        thing.innerHTML = title;
+        thing.classList.add('projects');
+        const taskList = [];
     
-    // console.log('thingid = ' + thing.id);
+        //Use to check if projectFactory is making projects with the correct ID
+        // console.log('thingid = ' + thing.id);
+    
+        projectArray.push(thing);
+        
+        thing.addEventListener('click', () => {
+            currentProjectID = thing.id;
 
-    projectArray.push(thing);
-    // console.log(projectArray);
+            //Hides all tasks 
+            let allTasks = document.getElementsByClassName('task');
+            let allTasksArray = Array.from(allTasks);
+            for (let i = 0; allTasksArray[i] != null; i++) {
+                allTasksArray[i].style.display = 'none';
+            }
 
-    
-    thing.addEventListener('click', () => {
-        console.log('thingid = ' + thing.id);
-        currentProjectID = thing.id;
-    });
-    
-    
-    
-    let taskID = 0;
-    const addTask = (title, details, dueDate, priority, taskID, taskContainer) => {
-        // console.log('ello');
-        let task = makeTaskDOM(title, details, dueDate, priority, taskID);
-        // console.log(task);
+            
+            let myTasks = document.getElementsByClassName(thing.id + 'Task');
+            // console.log(myTasks);
+            let myArray = Array.from(myTasks);
+            // console.log(myArray);
+            for (let i = 0; myArray[i] != null; i++) {
+                myArray[i].style.display = 'grid';
+            }
 
-        // console.log(taskContainer);
-        taskContainer.appendChild(task);
+            // let taskList = document.getElementsByClassName('task');
+            
+
+            // let taskDisplayYes = document.getElementsByClassName('')
+            // for (const task in taskList) {
+            //     let taskClass = currentProjectID + 'Task';
+            //     if (task.classList.contains(taskClass)) {
+            //         task.style.display = 'grid';
+            //     }
+            //     else {
+            //         task.style.display = 'none';
+            //     }
+            // }
+            
+
+        });
+        
+        
+        
+        let taskID = 0;
+        // const addTask = (title, details, dueDate, priority, taskID, taskContainer) => {
+        //     // console.log('ello');
+        //     let task = makeTaskDOM(title, details, dueDate, priority, taskID);
+        //     // console.log(task);
+    
+        //     // console.log(taskContainer);
+            // taskContainer.appendChild(task);
+        // }
+        // console.log(thing);
+        projectContainer.appendChild(thing);
+        
+    
+        // return {addTask};    
     }
-    // console.log(thing);
-    projectContainer.appendChild(thing);
-    
-
-    return {addTask};    
 }
 
 
+
+
+
+
+
+// function getCurrentProjectID(currentProjectID) {
+    
+
+    
+//     if (currentProjectID != undefined) {
+//         let num = currentProjectID;
+//     }
+    
+//     // console.log(currentProjectID + 'changer');
+//     return num
+// }
 
   document.body.appendChild(component());
