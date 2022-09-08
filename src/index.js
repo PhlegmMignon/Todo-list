@@ -5,10 +5,6 @@ import './style.css';
 function component() {
     let element = contentGen();
 
-    
-
-
-
     //Footer stuff
 //   const footer = document.createElement('div');
 //   footer.id = 'footer';
@@ -29,6 +25,7 @@ return element
 }
 
 function contentGen() {
+    localStorage.clear();
     const content = document.createElement('div');
     content.id = 'content';
 
@@ -170,8 +167,7 @@ function contentGen() {
                 else {
                     alert('Project must be named');
                 }
-                //might need counter projectFactory(textarea.value, container, projectNO, currentProjectID, projectArray);
-                // counter++;
+                
             })
 
             sidebar.appendChild(popup);
@@ -219,15 +215,37 @@ function contentGen() {
 
             popupForm.addEventListener('submit', (e) => {
                 e.preventDefault();
-                // console.log(datePicker.value);
-                // let tempProject = currentProjectID[0];
-                // console.log(tempProject);
-                let currentProject = projectArray[0];
-                // console.log(currentProject.id);
-                console.log(projectArray[0]);
 
                 let taskCard = makeTaskDOM(textarea.value, detailsTextArea.value, priorityBtn.value, datePicker.value);
                 taskContainer.appendChild(taskCard);
+
+                
+                //Add to local storage
+                
+                let counter = 0;
+                let key = counter;
+                counter++;
+                console.log(counter);
+
+
+                //Add counter outside of the listener. Your key will be the counter. 
+                //Make array to store all contents of taskCard. Array will reset
+                //Turn the array into json 
+                //To remove item, check if contents of array match what the taskCard was given
+                //To make card just 
+
+                let asdasd = textarea.value;
+                // console.log(value);
+
+                localStorage.setItem(key, asdasd);
+                
+                console.log(localStorage);
+                // console.log(textarea.value);
+
+                //make for loop so you can loop through each thing on the taskDOM
+
+                
+                
             });
 
             main.appendChild(popup);
