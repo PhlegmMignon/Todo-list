@@ -25,7 +25,8 @@ return element
 }
 
 function contentGen() {
-    localStorage.clear();
+    
+
     const content = document.createElement('div');
     content.id = 'content';
 
@@ -43,8 +44,10 @@ function contentGen() {
     projectContainer.id = 'projectContainer';
     sidebar.appendChild(projectContainer);
     
-    //Needed to assign tasks to a project
+    //Needed to assign tasks to a project. Contains the id
     let projectArray = [];
+    //contains the title of projects
+    let projectArr = [];
     
     let currentProjectID = 'project0';
     // console.log(Array.isArray(currentProjectID));
@@ -87,8 +90,7 @@ function contentGen() {
     
     // addTask.addEventListener('click', )
 
-
-
+    // loadLocalStorage();
     
     
     //Default project opened
@@ -153,8 +155,6 @@ function contentGen() {
 
             popupForm.id = 'projectPopupForm';
             popupContainer.id = 'projectPopupContainer';
-            // submitBtn.id = 'projectSubmitBtn';
-            // closeBtn.id = 'projectCloseBtn';
 
             let projectNO = 1;
             popupForm.addEventListener('submit', (e) => {
@@ -162,7 +162,9 @@ function contentGen() {
                 // console.log(textarea.value);
                 if (textarea.value != '') {
                     projectFactory(textarea.value, projectNO);
-                    projectNO++;
+                    
+
+
                 }
                 else {
                     alert('Project must be named');
@@ -212,39 +214,21 @@ function contentGen() {
             popupContainer.appendChild(datePicker);
 
 
-
             popupForm.addEventListener('submit', (e) => {
                 e.preventDefault();
 
                 let taskCard = makeTaskDOM(textarea.value, detailsTextArea.value, priorityBtn.value, datePicker.value);
                 taskContainer.appendChild(taskCard);
-
                 
-                //Add to local storage
+                //Adds to localstorage
+                // let key = textarea.value;
+                // let taskArray = [currentProjectID, textarea.value, detailsTextArea.value, priorityBtn.value, datePicker.value];
                 
-                let counter = 0;
-                let key = counter;
-                counter++;
-                console.log(counter);
+                // let contents = JSON.stringify(taskArray);
 
-
-                //Add counter outside of the listener. Your key will be the counter. 
-                //Make array to store all contents of taskCard. Array will reset
-                //Turn the array into json 
-                //To remove item, check if contents of array match what the taskCard was given
-                //To make card just 
-
-                let asdasd = textarea.value;
-                // console.log(value);
-
-                localStorage.setItem(key, asdasd);
+                // localStorage.setItem(key, contents);
                 
-                console.log(localStorage);
-                // console.log(textarea.value);
-
-                //make for loop so you can loop through each thing on the taskDOM
-
-                
+                // console.log(localStorage);            
                 
             });
 
@@ -256,13 +240,7 @@ function contentGen() {
     
     function makeTaskDOM(title, details, priority, dueDate) {
         const taskCard = document.createElement('div');
-        // taskCard.id = taskID;
-        // let taskClass = title + 'Task';
-        // taskClass = taskClass.replace(/\s/g, '');
-        // console.log(currentProjectID);
-        // let tempID = getCurrentProjectID();
-        // console.log(tempID);
-        // taskCard.classList.add(taskClass);
+        
         let taskClass = currentProjectID + 'Task';
         taskCard.classList.add(taskClass);
         taskCard.classList.add('task');
@@ -330,6 +308,7 @@ function contentGen() {
         else {
             thing.id = 'project' + projectNO;
         }
+        projectNO++;
 
         thing.innerHTML = title;
         thing.classList.add('projects');
@@ -339,6 +318,13 @@ function contentGen() {
         // console.log('thingid = ' + thing.id);
     
         projectArray.push(thing);
+        
+        if (projectNO != undefined) {
+            projectArr.push(thing.innerHTML);
+            // localStorage.setItem('projects', projectArr);
+            // console.log(localStorage);
+        }
+        
         
         thing.addEventListener('click', () => {
             currentProjectID = thing.id;
@@ -358,41 +344,36 @@ function contentGen() {
             for (let i = 0; myArray[i] != null; i++) {
                 myArray[i].style.display = 'grid';
             }
-
-            // let taskList = document.getElementsByClassName('task');
-            
-
-            // let taskDisplayYes = document.getElementsByClassName('')
-            // for (const task in taskList) {
-            //     let taskClass = currentProjectID + 'Task';
-            //     if (task.classList.contains(taskClass)) {
-            //         task.style.display = 'grid';
-            //     }
-            //     else {
-            //         task.style.display = 'none';
-            //     }
-            // }
-            
-
         });
         
-        
-        
-        let taskID = 0;
-        // const addTask = (title, details, dueDate, priority, taskID, taskContainer) => {
-        //     // console.log('ello');
-        //     let task = makeTaskDOM(title, details, dueDate, priority, taskID);
-        //     // console.log(task);
-    
-        //     // console.log(taskContainer);
-            // taskContainer.appendChild(task);
-        // }
-        // console.log(thing);
         projectContainer.appendChild(thing);
         
-    
-        // return {addTask};    
+        //Adds to local storage
+        // console.log(projectArr);
+        // console.log(projectArray);
+        // let lsProjectArr = JSON.stringify(projectArr);
+        // localStorage.setItem('projects', lsProjectArr);
     }
+
+    // function loadLocalStorage() {
+    //     let keyArray = Object.keys(localStorage);
+    //     // console.log(localStorage.projects);
+    
+        
+    //     //Loads projects
+    //     let localProjects = JSON.parse(localStorage.getItem('projects'));
+    //     // console.log(localProjects);
+
+
+    //         for (let i = 0; localProjects[i] != null; i++) {
+    //             projectFactory(localProjects[i]);
+    //             console.log('hi');
+    //         }
+        
+
+    //     //Loads task
+        
+    // }
 }
 
 
